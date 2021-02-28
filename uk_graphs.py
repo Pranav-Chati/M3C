@@ -23,9 +23,9 @@ AVERAGE_INFLATION_RATE = 0.00256
 AVERAGE_BROADBAND_COST_UK_2020 = 33.07
 
 # Sensitivity Analysis Values
-AVERAGE_INFLATION_RATE = 0.0026
+AVERAGE_INFLATION_RATE = 0.00256
 AVERAGE_BROADBAND_COST_UK_2020 = 33.07
-fit_function = general_exponential
+fit_function = strict_exponential
 
 df = pd.read_excel(sheet_name=0, io=r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx", engine='openpyxl')
 data = df.values
@@ -77,14 +77,14 @@ pyplot.scatter(years, average_us)
 x_line = np.linspace(min(years), 14, 100)
 
 ##### STRICT EXPONENTIAL #########
-# a, b = popt
-# print(f"{a} * 1.5 ^ x + {b}")
-# y_line = fit_function(x_line, a, b)
+a, b = popt
+print(f"{a} * 1.5 ^ x + {b}")
+y_line = fit_function(x_line, a, b)
 
 ###### GENERAL EXPONENTIAL ############
-a, b, c = popt
-print(f"{a} * {b} ^ x + {c}")
-y_line = fit_function(x_line, a, b, c)
+# a, b, c = popt
+# print(f"{a} * {b} ^ x + {c}")
+# y_line = fit_function(x_line, a, b, c)
 
 
 
@@ -106,13 +106,22 @@ def estimated_cost_per_mbps(y):
     return (estimated_plan_costs(y)) / (strict_exponential(y - 2016, a, b))
 
 
-print(f"cost per mbps 2021: {estimated_cost_per_mbps(2021)}")
+# print(f"cost per mbps 2021: {estimated_cost_per_mbps(2021)}")
+# print(f"cost per mbps 2031: {estimated_cost_per_mbps(2031)}")
+#
+# print(f"mbps 2021: {strict_exponential(2021 - 2016, a, b)}")
+# print(f"mbps 2031: {strict_exponential(2031 - 2016, a, b)}")
+#
+# print(f"average cost 2021: {estimated_plan_costs(2021)}")
+# print(f"average cost 2031: {estimated_plan_costs(2031)}")
+
+print(f"cost per mbps 2017: {estimated_cost_per_mbps(2017)}")
 print(f"cost per mbps 2031: {estimated_cost_per_mbps(2031)}")
 
-print(f"mbps 2021: {strict_exponential(2021 - 2016, a, b)}")
+print(f"mbps 2017: {strict_exponential(2017 - 2016, a, b)}")
 print(f"mbps 2031: {strict_exponential(2031 - 2016, a, b)}")
 
-print(f"average cost 2021: {estimated_plan_costs(2021)}")
+print(f"average cost 2017: {estimated_plan_costs(2017)}")
 print(f"average cost 2031: {estimated_plan_costs(2031)}")
 
 x_line = np.linspace(2016, 2031, 100)
