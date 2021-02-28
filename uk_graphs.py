@@ -5,9 +5,10 @@ import matplotlib.pyplot as plt
 from matplotlib import pyplot
 from scipy.optimize import curve_fit
 import math
-
 import openpyxl
 
+
+# Functions
 
 def general_exponential(x, c_1, c_2, c_3):
     return c_1 * pow(c_2, x) + c_3
@@ -17,7 +18,14 @@ def strict_exponential(x, c_1, c_2):
     return c_1 * pow(1.5, x) + c_2
 
 
-fit_function = strict_exponential
+# Constants
+AVERAGE_INFLATION_RATE = 0.00256
+AVERAGE_BROADBAND_COST_UK_2020 = 33.07
+
+# Sensitivity Analysis Values
+AVERAGE_INFLATION_RATE = 0.0026
+AVERAGE_BROADBAND_COST_UK_2020 = 33.07
+fit_function = general_exponential
 
 df = pd.read_excel(sheet_name=0, io=r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx", engine='openpyxl')
 data = df.values
@@ -58,30 +66,62 @@ print(f"years: {years}")
 # pyplot.xlabel("Years After 2016")
 # pyplot.show()
 
+
 print(f"Average uk stuff: {average_uk}")
 
 # curve fit
-popt, _ = curve_fit(fit_function, years, average_uk)
-# summarize the parameter values
-a, b = popt
-
-# Outputting the curve function coefficients
-# print(f"{a} * {b} ^ x + {c}")
-print(f"{a} * 1.5 ^ x + {b}")
+popt, _ = curve_fit(fit_function, years, average_us)
 
 
+pyplot.scatter(years, average_us)
+x_line = np.linspace(min(years), 14, 100)
 
-# plot input vs output
-pyplot.scatter(years, average_uk)
-# define a sequence of inputs between the smallest and largest known inputs
-x_line = np.linspace(min(years), max(years), 20)
-# calculate the output for the range
-y_line = fit_function(x_line, a, b)
+##### STRICT EXPONENTIAL #########
+# a, b = popt
+# print(f"{a} * 1.5 ^ x + {b}")
+# y_line = fit_function(x_line, a, b)
+
+###### GENERAL EXPONENTIAL ############
+a, b, c = popt
+print(f"{a} * {b} ^ x + {c}")
+y_line = fit_function(x_line, a, b, c)
+
+
+
+
+
 # create a line plot for the mapping function
 pyplot.plot(x_line, y_line, '--', color='red')
-pyplot.title("UK Average Mbps from 2017 - 2021")
+pyplot.title("US Average Mbps from 2017 - 2030")
 pyplot.xlabel("Years After 2016")
 pyplot.ylabel("Average Bandwidth (in Mbps)")
+pyplot.show()
+
+
+def estimated_plan_costs(y):
+    return AVERAGE_BROADBAND_COST_UK_2020 * pow((1 + AVERAGE_INFLATION_RATE), y - 2020)
+
+
+def estimated_cost_per_mbps(y):
+    return (estimated_plan_costs(y)) / (strict_exponential(y - 2016, a, b))
+
+
+print(f"cost per mbps 2021: {estimated_cost_per_mbps(2021)}")
+print(f"cost per mbps 2031: {estimated_cost_per_mbps(2031)}")
+
+print(f"mbps 2021: {strict_exponential(2021 - 2016, a, b)}")
+print(f"mbps 2031: {strict_exponential(2031 - 2016, a, b)}")
+
+print(f"average cost 2021: {estimated_plan_costs(2021)}")
+print(f"average cost 2031: {estimated_plan_costs(2031)}")
+
+x_line = np.linspace(2016, 2031, 100)
+y_line = estimated_cost_per_mbps(x_line)
+
+pyplot.plot(x_line, y_line, '--', color='red')
+pyplot.title("UK Average Cost per Mbps from 2016 to 2030")
+pyplot.xlabel("Year")
+pyplot.ylabel("Average Cost (Months per Mbps)")
 pyplot.show()
 
 # loc = r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx"
