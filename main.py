@@ -9,8 +9,8 @@ import math
 import openpyxl
 
 
-def objective(x, c_1, c_2):
-    return pow(c_1, x) + c_2
+def objective(x, c_1, c_2, c_3):
+    return c_1 * pow(c_2, x) + c_3
 
 
 df = pd.read_excel(sheet_name=0, io=r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx", engine='openpyxl')
@@ -21,15 +21,24 @@ data = df.values
 years, average_us_peak = data[7:12, 1], data[7:12, 4]
 average_us_peak_mobile = data[7:12, 8]
 
+average_uk_peak = data[7:12, 5]
+average_uk_peak_mobile = data[7:12, 9]
+
 print(average_us_peak)
 print(average_us_peak_mobile)
 
 average_us = []
+average_uk = []
 
 for i in range(5):
-    sum = average_us_peak[i] + average_us_peak_mobile[i]
-    average = sum / 2
+    sum_us = average_us_peak[i] + average_us_peak_mobile[i]
+    average = sum_us / 2
     average_us.append(average)
+
+    sum_uk = average_uk_peak[i] + average_uk_peak_mobile[i]
+    average = sum_uk / 2
+    average_uk.append(average)
+
 
 for year in years:
     year = year - 2016
@@ -39,25 +48,27 @@ print(f"averages:{average_us}")
 
 print(f"years: {years}")
 
-pyplot.plot(years, average_us, 'o')
-pyplot.title("Average Download Speed in The United States During 2017 - 2021 (Mbps)")
-pyplot.xlabel("Years After 2016")
-pyplot.show()
+# pyplot.plot(years, average_us, 'o')
+# pyplot.title("Average Download Speed in The United States During 2017 - 2021 (Mbps)")
+# pyplot.xlabel("Years After 2016")
+# pyplot.show()
 
 # curve fit
-popt, _ = curve_fit(objective, years, average_us_peak)
+popt, _ = curve_fit(objective, years, average_uk)
 # summarize the parameter values
-a, b = popt
-print(f"{a} {b}")
+a, b, c = popt
+print(f"{a} * {b} ^ x + {c}")
 # plot input vs output
-pyplot.scatter(years, average_us_peak)
+pyplot.scatter(years, average_uk)
 # define a sequence of inputs between the smallest and largest known inputs
 x_line = np.linspace(min(years), max(years), 20)
 # calculate the output for the range
-y_line = objective(x_line, a, b)
+y_line = objective(x_line, a, b, c)
 # create a line plot for the mapping function
 pyplot.plot(x_line, y_line, '--', color='red')
-pyplot.title("Mbps model")
+pyplot.title("UK Average Mbps from 2017 - 2021")
+pyplot.xlabel("Years After 2016")
+pyplot.ylabel("Average Bandwidth (in Mbps)")
 pyplot.show()
 
 # loc = r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx"
