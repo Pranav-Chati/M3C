@@ -11,7 +11,8 @@ class Person:
 
     def max_bandwidth(self):
         if self.heavy_internet_user:
-            return 39.5
+            # return 39.5
+            return 35
         else:
             if self.age_group == 0:
                 return 15.5

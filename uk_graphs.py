@@ -23,8 +23,8 @@ AVERAGE_INFLATION_RATE = 0.00256
 AVERAGE_BROADBAND_COST_UK_2020 = 33.07
 
 # Sensitivity Analysis Values
-AVERAGE_INFLATION_RATE = 0.00256
-AVERAGE_BROADBAND_COST_UK_2020 = 33.07
+# AVERAGE_INFLATION_RATE = 0.00256
+# AVERAGE_BROADBAND_COST_UK_2020 = 33.07
 fit_function = strict_exponential
 
 df = pd.read_excel(sheet_name=0, io=r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx", engine='openpyxl')
@@ -70,10 +70,10 @@ print(f"years: {years}")
 print(f"Average uk stuff: {average_uk}")
 
 # curve fit
-popt, _ = curve_fit(fit_function, years, average_us)
+popt, _ = curve_fit(fit_function, years, average_uk)
 
 
-pyplot.scatter(years, average_us)
+pyplot.scatter(years, average_uk)
 x_line = np.linspace(min(years), 14, 100)
 
 ##### STRICT EXPONENTIAL #########
@@ -92,7 +92,7 @@ y_line = fit_function(x_line, a, b)
 
 # create a line plot for the mapping function
 pyplot.plot(x_line, y_line, '--', color='red')
-pyplot.title("US Average Mbps from 2017 - 2030")
+pyplot.title("UK Average Mbps from 2017 - 2030")
 pyplot.xlabel("Years After 2016")
 pyplot.ylabel("Average Bandwidth (in Mbps)")
 pyplot.show()
@@ -125,12 +125,12 @@ print(f"average cost 2017: {estimated_plan_costs(2017)}")
 print(f"average cost 2031: {estimated_plan_costs(2031)}")
 
 x_line = np.linspace(2016, 2031, 100)
-y_line = estimated_cost_per_mbps(x_line)
+y_line = estimated_plan_costs(x_line)
 
 pyplot.plot(x_line, y_line, '--', color='red')
-pyplot.title("UK Average Cost per Mbps from 2016 to 2030")
+pyplot.title("UK Average Broadband Plan Cost per Month")
 pyplot.xlabel("Year")
-pyplot.ylabel("Average Cost (Months per Mbps)")
+pyplot.ylabel("Average Cost (Cost per Month)")
 pyplot.show()
 
 # loc = r"C:\Users\yusef\Downloads\TCP_2021_data_FINAL.xlsx"
